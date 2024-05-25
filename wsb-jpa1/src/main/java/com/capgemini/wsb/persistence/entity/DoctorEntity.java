@@ -2,19 +2,14 @@ package com.capgemini.wsb.persistence.entity;
 
 import com.capgemini.wsb.persistence.enums.Specialization;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "DOCTOR")
 public class DoctorEntity {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -37,6 +32,14 @@ public class DoctorEntity {
 	@Enumerated(EnumType.STRING)
 	private Specialization specialization;
 
+	@ManyToMany(mappedBy = "doctors")
+	private List<PatientEntity> patients;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_id", referencedColumnName = "id")
+	private AddressEntity address;
+
+	// Corrected Getters and Setters
 	public Long getId() {
 		return id;
 	}
@@ -92,5 +95,11 @@ public class DoctorEntity {
 	public void setSpecialization(Specialization specialization) {
 		this.specialization = specialization;
 	}
+	public AddressEntity getAddress() {
+		return address;
+	}
 
+	public void setAddress(AddressEntity address) {
+		this.address = address;
+	}
 }

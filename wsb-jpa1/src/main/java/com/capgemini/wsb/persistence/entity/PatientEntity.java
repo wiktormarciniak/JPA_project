@@ -1,13 +1,11 @@
 package com.capgemini.wsb.persistence.entity;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "PATIENT")
@@ -26,6 +24,9 @@ public class PatientEntity {
 	@Column(nullable = false)
 	private String telephoneNumber;
 
+	@Column(nullable = false)
+	private LocalDate registeredDate;
+
 	private String email;
 
 	@Column(nullable = false)
@@ -33,6 +34,21 @@ public class PatientEntity {
 
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
+
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<VisitEntity> visits;
+
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(
+			name = "DOCTOR_PATIENT",
+			joinColumns = @JoinColumn(name = "patient_id"),
+			inverseJoinColumns = @JoinColumn(name = "doctor_id")
+	)
+	private List<DoctorEntity> doctors;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_id", referencedColumnName = "id")
+	private AddressEntity address;
 
 	public Long getId() {
 		return id;
@@ -88,6 +104,30 @@ public class PatientEntity {
 
 	public void setDateOfBirth(LocalDate dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+
+	public LocalDate getRegisteredDate() {
+		return registeredDate;
+	}
+
+	public void setRegisteredDate(LocalDate registeredDate) {
+		this.registeredDate = registeredDate;
+	}
+
+	public List<VisitEntity> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(List<VisitEntity> visits) {
+		this.visits = visits;
+	}
+
+	public AddressEntity getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressEntity address) {
+		this.address = address;
 	}
 
 }
